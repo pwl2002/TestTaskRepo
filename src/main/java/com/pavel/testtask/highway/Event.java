@@ -12,7 +12,7 @@ import java.util.Date;
  *
  * @author PM
  */
-public class Message implements Serializable{
+public class Event implements Serializable{
     private String poinName;
     private int driverId;
     private boolean entered;
@@ -26,7 +26,7 @@ public class Message implements Serializable{
         this.date = date;
     }
 
-    Message(String poinName, int driverId, boolean event, Date date) {
+    Event(String poinName, int driverId, boolean event, Date date) {
         this.poinName = poinName;
         this.driverId = driverId;
         this.entered = event;

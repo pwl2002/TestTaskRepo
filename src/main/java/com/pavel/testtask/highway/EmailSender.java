@@ -5,8 +5,13 @@
  */
 package com.pavel.testtask.highway;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.mail.Authenticator;
 import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
@@ -18,70 +23,57 @@ import javax.mail.internet.MimeMessage;
  *
  * @author PM
  */
-class EmailSender implements Runnable {
-    
-    private final String emailTo;
-    private final float distance;
-    private final String enterPoinName;
-    private final String exitPoinName;
-    private Date enterDate;
-    private Date exitDate;
-    private Properties prop;
-    
-    public EmailSender(Properties prop, String emailTo, float distance, String enterPoinName,
-            Date enterDate, String exitPoinName, Date exitDate) {
-        this.emailTo = emailTo;
-        this.distance = distance;
-        this.enterPoinName = enterPoinName;
-        this.exitPoinName = exitPoinName;
-        this.enterDate = enterDate;
-        this.exitDate = exitDate;
-        this.prop = prop;
-    }
-    
-    @Override
-    public void run() {
-        
-        String from = prop.getProperty("from");
-        String host = prop.getProperty("host");
-        final String password = prop.getProperty("password");
-        final String username = prop.getProperty("username");
-        String port = prop.getProperty("port");
-        
-        float price = distance * Float.parseFloat(prop.getProperty("price.for.km"));
-        
-        Properties props = System.getProperties();
-        
-        props.put("mail.smtp.host", host);
-        props.put("mail.smtp.port", port);
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.socketFactory.port", port);
-        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-        
-        javax.mail.Session session = javax.mail.Session.getDefaultInstance(props,
-                new Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(username, password);
-                    }
-                });
-        
+class EmailSender {
+
+    private final Properties postServiceProperties;
+
+    public EmailSender() {
+
+        this.postServiceProperties = new Properties();
         try {
-            javax.mail.Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(from));
-            message.setRecipient(javax.mail.Message.RecipientType.TO,
-                    new InternetAddress(emailTo));
-            message.setSubject("Счет за проезд по автобану");
-            message.setText("Пункт въезда " + enterPoinName + " Время въезда "
-                    + enterDate + " Пункт выезда "
-                    + exitPoinName + " Время выезда " + exitDate + " Дистанция "
-                    + distance + " Стоимость " + price);            
-            
-            Transport.send(message);
-            System.out.println("Sent message successfully....");
-            
-        } catch (MessagingException mex) {
-            mex.printStackTrace();
+            this.postServiceProperties.load(new FileInputStream("src/main/resources/post_service_properties.properties"));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(EmailSender.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(EmailSender.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
+    public javax.mail.Message prepareMessage(String emailTo, String enterPoint, String exitPoint, float distance, Date enterDate, Date exitDate) {
+        javax.mail.Message message = null;
+        try {
+            javax.mail.Session session = javax.mail.Session.getDefaultInstance(postServiceProperties,
+                    new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(postServiceProperties.getProperty("username"),
+                            postServiceProperties.getProperty("password"));
+                }
+            });
+
+            message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(postServiceProperties.getProperty("from")));
+            message.setRecipient(javax.mail.Message.RecipientType.TO,
+                    new InternetAddress(/*emailTo*/"pwl2002@ukr.net"));
+            message.setSubject("Счет за проезд по автобану" + this.toString());
+            message.setText("Пункт въезда " + enterPoint + " Время въезда "
+                    + enterDate + " Пункт выезда "
+                    + exitPoint + " Время выезда " + exitDate + " Дистанция "
+                    + distance + " Стоимость " + distance * Float.parseFloat(postServiceProperties.getProperty("price.for.km")));
+
+        } catch (MessagingException ex) {
+            Logger.getLogger(EmailSender.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return message;
+    }
+
+    public void sendMessage(javax.mail.Message message) {
+        try {
+            Transport.send(message);
+        } catch (MessagingException ex) {
+            Logger.getLogger(EmailSender.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
 }
