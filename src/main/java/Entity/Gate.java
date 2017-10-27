@@ -5,13 +5,25 @@
  */
 package Entity;
 
+import java.io.Serializable;
+
 /**
  *
  * @author PM
  */
-public class EnterPoint {
+public class Gate implements Serializable{
+
     private String name;
     private float distance;
+    
+    public Gate(String name) {
+        this.name = name;        
+    }
+
+    public Gate(String name, float distance) {
+        this.name = name;
+        this.distance = distance;
+    }
 
     public String getName() {
         return name;

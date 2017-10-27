@@ -5,13 +5,11 @@
  */
 package com.pavel.testtask.highway;
 
-import Entity.Driver;
-import Entity.EnterPoint;
+import Entity.Gate;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -28,10 +26,9 @@ public class Session implements Runnable {
     private ObjectInputStream in;
     private ObjectOutputStream out;
     private Set<Event> event = new HashSet<>();
-    private final Set<Driver> driverSet;
-    private final Set<EnterPoint> enterPointSet;
 
-    Session(Socket socket, Set<Driver> driverSet, Set<EnterPoint> enterPointSet) {
+
+    Session(Socket socket) {
         this.socket = socket;
         try {
             in = new ObjectInputStream(socket.getInputStream());
@@ -41,11 +38,10 @@ public class Session implements Runnable {
             Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
             freeResourses();
         }
-        this.driverSet = driverSet;
-        this.enterPointSet = enterPointSet;
     }
 
     private void handleEvent(Event event) {
+
         if (event.isEntered() == true) {
             this.event.add(event);
 
@@ -53,11 +49,9 @@ public class Session implements Runnable {
             for (Iterator<Event> iterator = this.event.iterator();
                     iterator.hasNext();) {
 
-                Event nextEvent = iterator.next();
-                if (event.getDriverId() == nextEvent.getDriverId()) {
-
-                    sendInvoice(nextEvent.getPoinName(), nextEvent.getDate(),
-                            event.getPoinName(), event.getDate(), event.getDriverId());
+                Event enteredEvent = iterator.next();
+                if (event.getDriver().equals(enteredEvent.getDriver())) {
+                    sendInvoice(event, enteredEvent);
                     iterator.remove();
                     break;
                 }
@@ -65,46 +59,21 @@ public class Session implements Runnable {
         }
     }
 
-    private void sendInvoice(final String enterPoinName, final Date enterDate,
-            final String exitPoinName, final Date exitDate, final int driverId) {
-
+    private void sendInvoice(final Event exitEvent, final Event enteredEvent) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 EmailSender emailSender = new EmailSender();
-                emailSender.sendMessage(emailSender.prepareMessage(getDriverEmail(driverId),
-                        enterPoinName, exitPoinName, getDistance(enterPoinName, exitPoinName), enterDate, exitDate));
+                emailSender.sendMessage(emailSender.prepareMessage(exitEvent.getDriver().getEmail(),
+                        enteredEvent.getGate().getName(), exitEvent.getGate().getName(),
+                        getDistance(enteredEvent.getGate(), exitEvent.getGate()), enteredEvent.getDate(), exitEvent.getDate()));
             }
         }).start();
-
     }
 
-    private float getDistance(final String enterPoinName, final String exitPoinName) {
+    private float getDistance(final Gate enterPoinName, final Gate exitPoinName) {
 
-        float enterDistance = 0;
-        float exitDistance = 0;
-        for (EnterPoint ePoint : enterPointSet) {
-            if (ePoint.getName().equals(enterPoinName)) {
-                enterDistance = ePoint.getDistance();
-            }
-
-            if (ePoint.getName().equals(exitPoinName)) {
-                exitDistance = ePoint.getDistance();
-            }
-        }
-
-        return Math.abs(exitDistance - enterDistance);
-    }
-
-    private String getDriverEmail(int driverId) {
-        String driversEmail = null;
-        for (Driver driver : driverSet) {
-            if (driver.getId() == driverId) {
-                driversEmail = driver.getEmail();
-                break;
-            }
-        }
-        return driversEmail;
+        return Math.abs(enterPoinName.getDistance() - exitPoinName.getDistance());
     }
 
     @Override
@@ -121,21 +90,18 @@ public class Session implements Runnable {
                 if (msg instanceof Event) {
                     out.writeObject("S:::Успешно прочитано ");
                     out.reset();
+                    System.out.println("Point " + ((Event) msg).getGate().getName()
+                            + " Id водителя " + ((Event) msg).getDriver() + " событие "
+                            + ((Event) msg).isEntered());
 
                     handleEvent((Event) msg);
-                    System.out.println("from Session: " + "Point " + ((Event) msg).getPoinName()
-                            + " Id водителя " + ((Event) msg).getDriverId() + " событие "
-                            + ((Event) msg).isEntered());
+
                 } else {
                     freeResourses();
                     break;
                 }
 
-            } catch (IOException ex) {
-                Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
-                freeResourses();
-                return;
-            } catch (ClassNotFoundException ex) {
+            } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
                 freeResourses();
                 return;
@@ -165,7 +131,6 @@ public class Session implements Runnable {
                 Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex1);
             }
         }
-
     }
 
 }

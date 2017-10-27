@@ -5,6 +5,8 @@
  */
 package com.pavel.testtask.highway;
 
+import Entity.Driver;
+import Entity.Gate;
 import java.io.IOException;
 import java.util.Date;
 import java.util.logging.Level;
@@ -42,24 +44,24 @@ public class HighwayTest {
 
     private void startConversation(Client client) throws IOException, ClassNotFoundException {
         for (int i = 0; i < 10; i++) {
-            System.out.println((String) client.receiveMessage());
-            Event event = new Event(String.valueOf(i), i, true, new Date());
-            client.sendMessage(event);
+            System.out.println((String) client.receive());
+            Event event = new Event(new Gate(String.valueOf(i)), new Driver(i, "pwl2002@ukr.net"), true, new Date());
+            client.send(event);
 
             System.out.println("Отправлено следуещее сообщение " + "Point "
-                    + event.getPoinName() + " Id водителя " + event.getDriverId()
+                    + event.getGate().getName() + " Id водителя " + event.getDriver()
                     + " событие " + event.isEntered() + " дата " + event.getDate());
 
-            System.out.println((String) client.receiveMessage());
+            System.out.println((String) client.receive());
         }
 
         for (int i = 0; i < 1; i++) {
-            System.out.println((String) client.receiveMessage());
-            Event event = new Event(String.valueOf(i + 3), i, false, new Date());
-            client.sendMessage(event);
+            System.out.println((String) client.receive());
+            Event event = new Event(new Gate(String.valueOf(i + 3)), new Driver(i, "pwl2002@ukr.net"), false, new Date());
+            client.send(event);
 
             System.out.println("Отправлено следуещее сообщение " + "Point "
-                    + event.getPoinName() + " Id водителя " + event.getDriverId()
+                    + event.getGate().getName() + " Id водителя " + event.getDriver()
                     + " событие " + event.isEntered() + " дата " + event.getDate());
 
         }
@@ -77,10 +79,10 @@ public class HighwayTest {
 
         startServer();
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 2; i++) {
             startClient();
         }
-        
+
         Thread.currentThread().join(5000);
     }
 
@@ -116,7 +118,6 @@ public class HighwayTest {
                 }
             }
         }).start();
-
 
     }
 }

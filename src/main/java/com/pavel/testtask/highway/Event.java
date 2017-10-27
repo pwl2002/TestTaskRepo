@@ -5,6 +5,8 @@
  */
 package com.pavel.testtask.highway;
 
+import Entity.Driver;
+import Entity.Gate;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -12,11 +14,28 @@ import java.util.Date;
  *
  * @author PM
  */
-public class Event implements Serializable{
-    private String poinName;
-    private int driverId;
+public class Event implements Serializable {
+
+    private Gate gate;
+    private Driver driver;
     private boolean entered;
     private Date date;
+
+    public Gate getGate() {
+        return gate;
+    }
+
+    public void setGate(Gate gate) {
+        this.gate = gate;
+    }
+
+    public Driver getDriver() {
+        return driver;
+    }
+
+    public void setDriver(Driver driverId) {
+        this.driver = driverId;
+    }
 
     public Date getDate() {
         return date;
@@ -26,27 +45,11 @@ public class Event implements Serializable{
         this.date = date;
     }
 
-    Event(String poinName, int driverId, boolean event, Date date) {
-        this.poinName = poinName;
-        this.driverId = driverId;
+    Event(Gate gate, Driver driver, boolean event, Date date) {
+        this.gate = gate;
+        this.driver = driver;
         this.entered = event;
         this.date = date;
-    }
-
-    public String getPoinName() {
-        return poinName;
-    }
-
-    public void setPoinName(String poinName) {
-        this.poinName = poinName;
-    }
-
-    public int getDriverId() {
-        return driverId;
-    }
-
-    public void setDriverId(int driverId) {
-        this.driverId = driverId;
     }
 
     public boolean isEntered() {
@@ -56,5 +59,5 @@ public class Event implements Serializable{
     public void setEntered(boolean entered) {
         this.entered = entered;
     }
-    
+
 }

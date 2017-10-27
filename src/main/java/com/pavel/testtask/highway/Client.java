@@ -43,17 +43,17 @@ public class Client {
 
     }
 
-    public void sendMessage(Event event) throws IOException {
+    public void send(Event event) throws IOException {
         out.writeObject(event);
     }
 
-    public Object receiveMessage() throws IOException, ClassNotFoundException {
+    public Object receive() throws IOException, ClassNotFoundException {
         Object obj = in.readObject();
         out.reset();
         return obj;
     }
 
-    public void freeResourses() {
+    private void freeResourses() {
         if (in != null) {
             try {
                 in.close();

@@ -39,7 +39,8 @@ class EmailSender {
         }
     }
 
-    public javax.mail.Message prepareMessage(String emailTo, String enterPoint, String exitPoint, float distance, Date enterDate, Date exitDate) {
+    public javax.mail.Message prepareMessage(String emailTo, String enterPoint, 
+            String exitPoint, float distance, Date enterDate, Date exitDate) {
         javax.mail.Message message = null;
         try {
             javax.mail.Session session = javax.mail.Session.getDefaultInstance(postServiceProperties,
