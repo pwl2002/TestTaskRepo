@@ -24,9 +24,9 @@ public class Client {
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
-    private final Properties clientProp = new Properties();
+    private Properties clientProp = new Properties();
 
-    Client() {
+    public Client() {
         try {
             clientProp.load(new FileInputStream("src/main/resources/client.properties"));
         } catch (FileNotFoundException ex) {
@@ -53,6 +53,15 @@ public class Client {
         return obj;
     }
 
+    public void exit() {
+        try {
+            out.writeObject("exit");
+            freeResourses();
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     private void freeResourses() {
         if (in != null) {
             try {
@@ -75,15 +84,6 @@ public class Client {
             } catch (IOException ex1) {
                 Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex1);
             }
-        }
-    }
-
-    public void exit() {
-        try {
-            out.writeObject("exit");
-            freeResourses();
-        } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

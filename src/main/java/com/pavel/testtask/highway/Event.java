@@ -18,8 +18,8 @@ public class Event implements Serializable {
 
     private Gate gate;
     private Driver driver;
-    private boolean entered;
     private Date date;
+    private boolean isEntered;
 
     public Gate getGate() {
         return gate;
@@ -48,16 +48,15 @@ public class Event implements Serializable {
     Event(Gate gate, Driver driver, boolean event, Date date) {
         this.gate = gate;
         this.driver = driver;
-        this.entered = event;
         this.date = date;
+        this.isEntered = event;
     }
 
-    public boolean isEntered() {
-        return entered;
+    public boolean isIsEntered() {
+        return isEntered;
     }
 
-    public void setEntered(boolean entered) {
-        this.entered = entered;
+    public void setIsEntered(boolean isEntered) {
+        this.isEntered = isEntered;
     }
-
 }

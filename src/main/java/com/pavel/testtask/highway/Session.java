@@ -25,7 +25,7 @@ public class Session implements Runnable {
     private Socket socket;
     private ObjectInputStream in;
     private ObjectOutputStream out;
-    private Set<Event> event = new HashSet<>();
+    private Set<Event> eventSet = new HashSet<>();
 
 
     Session(Socket socket) {
@@ -42,11 +42,11 @@ public class Session implements Runnable {
 
     private void handleEvent(Event event) {
 
-        if (event.isEntered() == true) {
-            this.event.add(event);
+        if (event.isIsEntered() == true) {
+            eventSet.add(event);
 
         } else {
-            for (Iterator<Event> iterator = this.event.iterator();
+            for (Iterator<Event> iterator = this.eventSet.iterator();
                     iterator.hasNext();) {
 
                 Event enteredEvent = iterator.next();
@@ -92,7 +92,7 @@ public class Session implements Runnable {
                     out.reset();
                     System.out.println("Point " + ((Event) msg).getGate().getName()
                             + " Id водителя " + ((Event) msg).getDriver() + " событие "
-                            + ((Event) msg).isEntered());
+                            + ((Event) msg).isIsEntered());
 
                     handleEvent((Event) msg);
 

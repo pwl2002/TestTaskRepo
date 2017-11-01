@@ -50,7 +50,7 @@ public class HighwayTest {
 
             System.out.println("Отправлено следуещее сообщение " + "Point "
                     + event.getGate().getName() + " Id водителя " + event.getDriver()
-                    + " событие " + event.isEntered() + " дата " + event.getDate());
+                    + " событие " + event.isIsEntered() + " дата " + event.getDate());
 
             System.out.println((String) client.receive());
         }
@@ -62,7 +62,7 @@ public class HighwayTest {
 
             System.out.println("Отправлено следуещее сообщение " + "Point "
                     + event.getGate().getName() + " Id водителя " + event.getDriver()
-                    + " событие " + event.isEntered() + " дата " + event.getDate());
+                    + " событие " + event.isIsEntered() + " дата " + event.getDate());
 
         }
         try {
