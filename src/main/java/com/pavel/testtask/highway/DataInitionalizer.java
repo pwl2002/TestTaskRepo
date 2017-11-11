@@ -5,8 +5,8 @@
  */
 package com.pavel.testtask.highway;
 
-import Entity.Driver;
-import Entity.Gate;
+import entity.Driver;
+import entity.Gate;
 import java.util.Set;
 
 /**

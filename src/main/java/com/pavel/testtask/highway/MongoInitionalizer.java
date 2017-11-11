@@ -5,8 +5,8 @@
  */
 package com.pavel.testtask.highway;
 
-import Entity.Driver;
-import Entity.Gate;
+import entity.Driver;
+import entity.Gate;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
@@ -29,12 +29,12 @@ import java.util.logging.Logger;
 public class MongoInitionalizer implements DataInitionalizer {
 
     private DB db;
-    Properties dbProperties = null;
+    Properties dbProperties = new Properties();
 
     public MongoInitionalizer() {
 
-        try {
-            dbProperties.load(new FileInputStream("src/main/resources/client.properties"));
+        try (FileInputStream fis = new FileInputStream("src/main/resources/client.properties")) {
+            dbProperties.load(fis);
             MongoClient mongo = new MongoClient(/*"localhost", 27017*/
                     dbProperties.getProperty("db.host"), Integer.parseInt(dbProperties.getProperty("db.port")));
             db = mongo.getDB(dbProperties.getProperty("db.name"));

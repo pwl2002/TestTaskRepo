@@ -5,8 +5,8 @@
  */
 package com.pavel.testtask.highway;
 
-import Entity.Driver;
-import Entity.Gate;
+import entity.Driver;
+import entity.Gate;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -20,6 +20,8 @@ public class Event implements Serializable {
     private Driver driver;
     private Date date;
     private boolean isEntered;
+    private static final long serialVersionUID = 20100515;
+
 
     public Gate getGate() {
         return gate;
@@ -38,11 +40,12 @@ public class Event implements Serializable {
     }
 
     public Date getDate() {
-        return date;
+        System.out.println(this.date.toString());
+        return new Date(this.date.getTime());
     }
 
     public void setDate(Date date) {
-        this.date = date;
+        this.date = new Date(date.getTime());
     }
 
     Event(Gate gate, Driver driver, boolean event, Date date) {

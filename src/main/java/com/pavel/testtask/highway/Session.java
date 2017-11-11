@@ -5,7 +5,7 @@
  */
 package com.pavel.testtask.highway;
 
-import Entity.Gate;
+import entity.Gate;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

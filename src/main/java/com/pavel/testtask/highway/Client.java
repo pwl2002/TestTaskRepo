@@ -27,8 +27,8 @@ public class Client {
     private Properties clientProp = new Properties();
 
     public Client() {
-        try {
-            clientProp.load(new FileInputStream("src/main/resources/client.properties"));
+        try (FileInputStream fis = new FileInputStream("src/main/resources/client.properties")) {
+            clientProp.load(fis);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {

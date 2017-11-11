@@ -30,8 +30,8 @@ class EmailSender {
     public EmailSender() {
 
         this.postServiceProperties = new Properties();
-        try {
-            this.postServiceProperties.load(new FileInputStream("src/main/resources/post_service_properties.properties"));
+        try (FileInputStream fis = new FileInputStream("src/main/resources/post_service_properties.properties")) {
+            this.postServiceProperties.load(fis);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(EmailSender.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -39,7 +39,7 @@ class EmailSender {
         }
     }
 
-    public javax.mail.Message prepareMessage(String emailTo, String enterPoint, 
+    public javax.mail.Message prepareMessage(String emailTo, String enterPoint,
             String exitPoint, float distance, Date enterDate, Date exitDate) {
         javax.mail.Message message = null;
         try {

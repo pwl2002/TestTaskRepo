@@ -5,8 +5,8 @@
  */
 package com.pavel.testtask.highway;
 
-import Entity.Driver;
-import Entity.Gate;
+import entity.Driver;
+import entity.Gate;
 import java.io.IOException;
 import java.util.Date;
 import java.util.logging.Level;
@@ -86,18 +86,21 @@ public class HighwayTest {
         Thread.currentThread().join(5000);
     }
 
-    public void startServer() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Server server = new Server();
-                try {
-                    server.startServer();
-                } catch (IOException ex) {
-                    Logger.getLogger(HighwayTest.class.getName()).log(Level.SEVERE, null, ex);
-                }
+    static class ServerLauncher implements Runnable {
+
+        @Override
+        public void run() {
+            Server server = new Server();
+            try {
+                server.startServer();
+            } catch (IOException ex) {
+                Logger.getLogger(HighwayTest.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }).start();
+        }
+    }
+
+    public void startServer() {
+        new Thread(new ServerLauncher()).start();
     }
 
     public void startClient() {

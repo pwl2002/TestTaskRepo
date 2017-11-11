@@ -20,12 +20,12 @@ import java.util.logging.Logger;
  */
 public class Server {
 
-    private ServerSocket serverSocket; 
+    private ServerSocket serverSocket;
     private Properties serverProp = new Properties();
 
     Server() {
-        try {
-            serverProp.load(new FileInputStream("src/main/resources/server.properties"));
+        try (FileInputStream fis = new FileInputStream("src/main/resources/server.properties")) {
+            serverProp.load(fis);
             serverSocket = new ServerSocket(Integer.parseInt(serverProp.getProperty("server.socket.port")));
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);

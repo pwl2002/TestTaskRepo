@@ -83,30 +83,29 @@ public class HistogramMaker {
     }
 
     public String typeCommand() {
-        Scanner scan = new Scanner(System.in);
+        Scanner scan = new Scanner(System.in, "UTF-8");
         String ss = scan.nextLine();
         return ss;
     }
 
     public static void main(String[] args) {
 
-        args = new String[5];
-        args[0] = "imhist";
-        args[1] = "-i";
-        args[2] = "c:\\1.jpg";
-        args[3] = "-o";
-        args[4] = "6.jpg";
-                
+//        args = new String[5];
+//        args[0] = "imhist";
+//        args[1] = "-i";
+//        args[2] = "c:\\1.jpg";
+//        args[3] = "-o";
+//        args[4] = "6.jpg";
         if (args.length > 0 && args[0].equals("imhist") && args[1].equals("-i")
                 && args[3].equals("-o")) {
 
             if (args[4].endsWith(".jpg") || args[4].endsWith(".png")
                     || args[4].endsWith(".gif") || args[4].endsWith(".bmp")) {
                 new HistogramMaker().makeHistogram(args[2], args[4]);
-            }else{
+            } else {
                 System.out.println("Input correct parameters. For example: imhist -i *.jpg -o *.jpg");
             }
-        }else{
+        } else {
             System.out.println("Input correct parameters. For example: imhist -i *.jpg -o *.jpg");
         }
     }
